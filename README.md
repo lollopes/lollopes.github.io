@@ -15,7 +15,7 @@ python scripts/fetch_scholar.py
 
 Optional environment variables:
 
-- `SCHOLAR_USER_ID`: preferred if you know the exact Google Scholar profile ID.
+- `SCHOLAR_USER_ID`: preferred if you know the exact Google Scholar profile ID. For Lorenzo Pes, use `tCzijDwAAAAJ`.
 - `SCHOLAR_AUTHOR_NAME`: defaults to `Lorenzo Pes`.
 - `SCHOLAR_AFFILIATION_HINT`: defaults to `Eindhoven University of Technology`.
 

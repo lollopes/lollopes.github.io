@@ -269,6 +269,20 @@
     const scholarSearchUrl = 'https://scholar.google.com/scholar?q=%22Lorenzo%20Pes%22';
     const tueProfileUrl = 'https://research.tue.nl/en/persons/lorenzo-pes';
     const orcidUrl = 'https://orcid.org/0000-0002-8151-9327';
+    const fallbackProfile = {
+      scholar_url: scholarSearchUrl,
+      tue_url: tueProfileUrl,
+      orcid: orcidUrl
+    };
+    const fallbackPublications = [
+      {
+        year: 2024,
+        title: 'Online Spatio-Temporal Learning with Target Projection',
+        venue: 'IBM Research',
+        citations: null,
+        url: 'https://research.ibm.com/publications/online-spatio-temporal-learning-with-target-projection'
+      }
+    ];
 
     const formatNumber = (value) => new Intl.NumberFormat('en-US').format(value || 0);
 
@@ -286,14 +300,14 @@
       });
     };
 
-    setProfileLinks();
+    setProfileLinks(fallbackProfile);
 
-    const setMetrics = (profile) => {
+    const setMetrics = (profile, hasLiveMetrics = false) => {
       if (!publicationMetrics) return;
       const metrics = [
-        { label: 'Total Citations', value: formatNumber(profile?.citedby) },
-        { label: 'H-index', value: String(profile?.hindex ?? 0) },
-        { label: 'i10-index', value: String(profile?.i10index ?? 0) }
+        { label: 'Total Citations', value: hasLiveMetrics ? formatNumber(profile?.citedby) : 'Profile link' },
+        { label: 'H-index', value: hasLiveMetrics ? String(profile?.hindex ?? 0) : 'Profile link' },
+        { label: 'i10-index', value: hasLiveMetrics ? String(profile?.i10index ?? 0) : 'Profile link' }
       ];
 
       publicationMetrics.innerHTML = metrics.map((metric) => `
@@ -320,13 +334,14 @@
         const year = work.year || 'n.d.';
         const title = work.title || 'Untitled';
         const venue = work.venue || 'Venue not specified';
-        const citations = work.citations ?? 0;
+        const citations = work.citations;
         const url = work.url;
+        const citationsText = citations == null ? 'Citations unavailable' : `Citations: ${formatNumber(citations)}`;
 
         return `
           <article class="list-item">
             <h3>${year} · ${title}</h3>
-            <p><em>${venue}</em> · Citations: ${formatNumber(citations)}</p>
+            <p><em>${venue}</em> · ${citationsText}</p>
             ${url ? `<p><a href="${url}">View publication</a></p>` : ''}
           </article>
         `;
@@ -354,11 +369,22 @@
         if (!response.ok) throw new Error('Failed to load Scholar snapshot');
         const scholarData = await response.json();
 
-        setMetrics(scholarData.profile);
-        setProfileLinks(scholarData.profile);
-        renderPublications(scholarData.publications || []);
+        const publications = Array.isArray(scholarData.publications) && scholarData.publications.length
+          ? scholarData.publications
+          : fallbackPublications;
+        const hasLiveMetrics = Boolean(
+          scholarData?.generated_at &&
+          scholarData?.profile &&
+          ['citedby', 'hindex', 'i10index'].some((key) => scholarData.profile[key] != null)
+        );
+
+        setMetrics(scholarData.profile || fallbackProfile, hasLiveMetrics);
+        setProfileLinks(scholarData.profile || fallbackProfile);
+        renderPublications(publications);
       } catch (error) {
-        renderPublicationError();
+        setMetrics(fallbackProfile, false);
+        setProfileLinks(fallbackProfile);
+        renderPublications(fallbackPublications);
       }
     };
 

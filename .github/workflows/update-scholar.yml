@@ -31,7 +31,7 @@ jobs:
         env:
           SCHOLAR_AUTHOR_NAME: Lorenzo Pes
           SCHOLAR_AFFILIATION_HINT: Eindhoven University of Technology
-          SCHOLAR_USER_ID: ${{ secrets.SCHOLAR_USER_ID }}
+          SCHOLAR_USER_ID: tCzijDwAAAAJ
         run: python scripts/fetch_scholar.py
 
       - name: Commit updated snapshot

@@ -71,25 +71,46 @@ def find_author() -> dict[str, Any]:
     return best_match
 
 
+def build_publication_payload(publication: dict[str, Any], filled_publication: dict[str, Any] | None = None) -> dict[str, Any]:
+    source = filled_publication or publication
+    bibliographic = source.get("bib", {})
+    fallback_bibliographic = publication.get("bib", {})
+
+    title = bibliographic.get("title") or fallback_bibliographic.get("title") or "Untitled"
+    year = bibliographic.get("pub_year") or fallback_bibliographic.get("pub_year")
+    venue = (
+        bibliographic.get("citation")
+        or bibliographic.get("journal")
+        or bibliographic.get("venue")
+        or fallback_bibliographic.get("citation")
+        or fallback_bibliographic.get("journal")
+        or fallback_bibliographic.get("venue")
+    )
+    citations = source.get("num_citations")
+    if citations is None:
+        citations = publication.get("num_citations", 0)
+
+    return {
+        "title": title,
+        "year": year,
+        "venue": venue,
+        "citations": citations,
+        "url": source.get("pub_url") or source.get("eprint_url"),
+    }
+
+
 def extract_publications(filled_author: dict[str, Any]) -> list[dict[str, Any]]:
     publications = []
 
     for publication in filled_author.get("publications", []):
+        payload = None
         try:
             filled_publication = scholarly.fill(publication)
+            payload = build_publication_payload(publication, filled_publication)
         except Exception:
-            continue
+            payload = build_publication_payload(publication)
 
-        bibliographic = filled_publication.get("bib", {})
-        publications.append(
-            {
-                "title": bibliographic.get("title") or "Untitled",
-                "year": bibliographic.get("pub_year"),
-                "venue": bibliographic.get("citation") or bibliographic.get("journal") or bibliographic.get("venue"),
-                "citations": filled_publication.get("num_citations", 0),
-                "url": filled_publication.get("pub_url") or filled_publication.get("eprint_url"),
-            }
-        )
+        publications.append(payload)
 
     publications.sort(
         key=lambda publication: (
@@ -103,7 +124,7 @@ def extract_publications(filled_author: dict[str, Any]) -> list[dict[str, Any]]:
 
 
 def build_payload(filled_author: dict[str, Any]) -> dict[str, Any]:
-    scholar_id = filled_author.get("scholar_id")
+    scholar_id = filled_author.get("scholar_id") or filled_author.get("id")
     return {
         "generated_at": datetime.now(timezone.utc).isoformat(),
         "profile": {
