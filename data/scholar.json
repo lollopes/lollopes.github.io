@@ -1,14 +1,57 @@
 {
-  "generated_at": null,
+  "generated_at": "2026-04-09T16:48:41.409194+00:00",
   "profile": {
     "name": "Lorenzo Pes",
-    "scholar_url": "https://scholar.google.com/scholar?q=%22Lorenzo%20Pes%22",
+    "scholar_url": "https://scholar.google.com/citations?user=tCzijDwAAAAJ&hl=en",
     "tue_url": "https://research.tue.nl/en/persons/lorenzo-pes",
     "orcid": "https://orcid.org/0000-0002-8151-9327",
-    "affiliation": "Eindhoven University of Technology",
-    "citedby": 0,
-    "hindex": 0,
-    "i10index": 0
+    "affiliation": "PhD Candidate, Eindhoven University of Technology",
+    "citedby": 26,
+    "hindex": 2,
+    "i10index": 1
   },
-  "publications": []
+  "publications": [
+    {
+      "title": "Traces propagation: memory-efficient and scalable forward-only learning in spiking neural networks",
+      "year": 2026,
+      "venue": "Neuromorphic Computing and Engineering 6 (1), 014002, 2026",
+      "citations": 1,
+      "url": "https://iopscience.iop.org/article/10.1088/2634-4386/ae2ef9/meta"
+    },
+    {
+      "title": "LOKI: a 0.266 pJ/SOP Digital SNN Accelerator with Multi-Cycle Clock-Gated SRAM in 22 nm",
+      "year": 2026,
+      "venue": "2026 31st Asia and South Pacific Design Automation Conference (ASP-DAC), 133-139, 2026",
+      "citations": 0,
+      "url": "https://ieeexplore.ieee.org/abstract/document/11420301/"
+    },
+    {
+      "title": "Hardware-In-The-Loop Training of a 4f Optical Correlator with Logarithmic Complexity Reduction for CNNs",
+      "year": 2025,
+      "venue": "Optical Fiber Communication Conference, Tu3F. 3, 2025",
+      "citations": 1,
+      "url": "https://opg.optica.org/abstract.cfm?uri=OFC-2025-Tu3F.3"
+    },
+    {
+      "title": "Active Dendrites Enable Efficient Continual Learning in Time-To-First-Spike Neural Networks",
+      "year": 2024,
+      "venue": "2024 6th IEEE International Conference on Artificial Intelligence Circuits \u2026, 2024",
+      "citations": 7,
+      "url": "https://ieeexplore.ieee.org/abstract/document/10595872/"
+    },
+    {
+      "title": "Efficient biologically-inspired online learning alternatives to BPTT",
+      "year": 2024,
+      "venue": "International Conference on Neuromorphic Computing and Engineering, 2024",
+      "citations": 0,
+      "url": "https://research.ibm.com/publications/efficient-biologically-inspired-online-learning-alternatives-to-bptt"
+    },
+    {
+      "title": "Online Spatio-Temporal Learning with Target Projection",
+      "year": 2023,
+      "venue": "2023 5th IEEE International Conference on Artificial Intelligence Circuits \u2026, 2023",
+      "citations": 17,
+      "url": "https://arxiv.org/abs/2304.05124"
+    }
+  ]
 }
