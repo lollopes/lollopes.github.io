@@ -238,7 +238,6 @@
     const publicationList = document.querySelector('#publication-list');
     const publicationMetrics = document.querySelector('#publication-metrics');
     const profileLinks = [...document.querySelectorAll('[data-profile-link]')];
-    const authorOrcid = '0000-0002-8151-9327';
 
     menuToggle.addEventListener('click', () => {
       const expanded = menuToggle.getAttribute('aria-expanded') === 'true';
@@ -266,95 +265,35 @@
 
     sections.forEach((section) => observer.observe(section));
 
+    const scholarDataUrl = './data/scholar.json';
+    const scholarSearchUrl = 'https://scholar.google.com/scholar?q=%22Lorenzo%20Pes%22';
+    const tueProfileUrl = 'https://research.tue.nl/en/persons/lorenzo-pes';
+    const orcidUrl = 'https://orcid.org/0000-0002-8151-9327';
+
     const formatNumber = (value) => new Intl.NumberFormat('en-US').format(value || 0);
 
-    const toSearchQuery = (value) => encodeURIComponent(`"${value}"`);
-
-    const slugify = (value) => value
-      .toLowerCase()
-      .normalize('NFKD')
-      .replace(/[\u0300-\u036f]/g, '')
-      .replace(/[^a-z0-9]+/g, '-')
-      .replace(/^-+|-+$/g, '');
-
-    const normalizeTitle = (value) => (value || '')
-      .toLowerCase()
-      .normalize('NFKD')
-      .replace(/[\u0300-\u036f]/g, '')
-      .replace(/[^a-z0-9]+/g, ' ')
-      .replace(/\s+/g, ' ')
-      .trim();
-
-    const workPreferenceScore = (work) => {
-      const type = (work.type || '').toLowerCase();
-      const locationType = (work.primary_location?.source?.type || '').toLowerCase();
-
-      return [
-        type !== 'preprint',
-        Boolean(work.doi),
-        Boolean(work.primary_location?.landing_page_url),
-        locationType === 'journal',
-        locationType === 'conference',
-        work.cited_by_count ?? 0,
-        work.publication_year ?? 0
-      ];
-    };
-
-    const isPreferredWork = (candidate, current) => {
-      const candidateScore = workPreferenceScore(candidate);
-      const currentScore = workPreferenceScore(current);
-
-      for (let index = 0; index < candidateScore.length; index += 1) {
-        if (candidateScore[index] === currentScore[index]) continue;
-        return candidateScore[index] > currentScore[index];
-      }
-
-      return false;
-    };
-
-    const dedupeWorks = (works) => {
-      const groupedWorks = new Map();
-
-      works.forEach((work) => {
-        const key = normalizeTitle(work.title) || work.id;
-        const existing = groupedWorks.get(key);
-
-        if (!existing || isPreferredWork(work, existing)) {
-          groupedWorks.set(key, work);
-        }
-      });
-
-      return [...groupedWorks.values()].sort((left, right) => {
-        const rightDate = right.publication_date || '';
-        const leftDate = left.publication_date || '';
-        return rightDate.localeCompare(leftDate);
-      });
-    };
-
-    const setProfileLinks = (author) => {
-      const displayName = author?.display_name || 'Lorenzo Pes';
+    const setProfileLinks = (profile) => {
       const linksByType = {
-        scholar: `https://scholar.google.com/scholar?q=${toSearchQuery(displayName)}`,
-        tue: `https://research.tue.nl/en/persons/${slugify(displayName)}`,
-        orcid: author?.orcid || author?.ids?.orcid || `https://orcid.org/${authorOrcid}`
+        scholar: profile?.scholar_url || scholarSearchUrl,
+        tue: profile?.tue_url || tueProfileUrl,
+        orcid: profile?.orcid || orcidUrl
       };
 
       profileLinks.forEach((link) => {
         const profileType = link.dataset.profileLink;
         const href = linksByType[profileType];
-        if (!href) return;
-        link.href = href;
+        if (href) link.href = href;
       });
     };
 
     setProfileLinks();
 
-    const setMetrics = (author) => {
+    const setMetrics = (profile) => {
       if (!publicationMetrics) return;
       const metrics = [
-        { label: 'Total Citations', value: formatNumber(author?.cited_by_count) },
-        { label: 'H-index', value: String(author?.summary_stats?.h_index ?? 0) },
-        { label: 'i10-index', value: String(author?.summary_stats?.i10_index ?? 0) }
+        { label: 'Total Citations', value: formatNumber(profile?.citedby) },
+        { label: 'H-index', value: String(profile?.hindex ?? 0) },
+        { label: 'i10-index', value: String(profile?.i10index ?? 0) }
       ];
 
       publicationMetrics.innerHTML = metrics.map((metric) => `
@@ -378,15 +317,11 @@
       }
 
       publicationList.innerHTML = works.map((work) => {
-        const year = work.publication_year || 'n.d.';
+        const year = work.year || 'n.d.';
         const title = work.title || 'Untitled';
-        const venue = work.primary_location?.source?.display_name || 'Venue not specified';
-        const citations = work.cited_by_count ?? 0;
-        const landingPageUrl = work.primary_location?.landing_page_url;
-        const doiUrl = work.doi
-          ? `https://doi.org/${work.doi.replace('https://doi.org/', '').replace('http://doi.org/', '')}`
-          : null;
-        const url = landingPageUrl || doiUrl;
+        const venue = work.venue || 'Venue not specified';
+        const citations = work.citations ?? 0;
+        const url = work.url;
 
         return `
           <article class="list-item">
@@ -407,7 +342,7 @@
       `;
       publicationList.innerHTML = `
         <article class="list-item">
-          <h3>Live publication feed unavailable</h3>
+          <h3>Scholar snapshot unavailable</h3>
           <p>The profile links above are still available for direct access.</p>
         </article>
       `;
@@ -415,20 +350,13 @@
 
     const loadPublications = async () => {
       try {
-        const authorResponse = await fetch(`https://api.openalex.org/authors?filter=orcid:${authorOrcid}`);
-        if (!authorResponse.ok) throw new Error('Failed to load author profile');
-        const authorData = await authorResponse.json();
-        const author = authorData.results?.[0];
-        if (!author?.id) throw new Error('Author profile not found');
+        const response = await fetch(`${scholarDataUrl}?v=${Date.now()}`, { cache: 'no-store' });
+        if (!response.ok) throw new Error('Failed to load Scholar snapshot');
+        const scholarData = await response.json();
 
-        setMetrics(author);
-        setProfileLinks(author);
-
-        const authorFilter = encodeURIComponent(`author.id:${author.id}`);
-        const worksResponse = await fetch(`https://api.openalex.org/works?filter=${authorFilter}&sort=publication_date:desc&per-page=50`);
-        if (!worksResponse.ok) throw new Error('Failed to load publications');
-        const worksData = await worksResponse.json();
-        renderPublications(dedupeWorks(worksData.results || []).slice(0, 12));
+        setMetrics(scholarData.profile);
+        setProfileLinks(scholarData.profile);
+        renderPublications(scholarData.publications || []);
       } catch (error) {
         renderPublicationError();
       }

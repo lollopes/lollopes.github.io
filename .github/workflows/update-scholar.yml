@@ -1,0 +1,41 @@
+name: Update Scholar Data
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+  schedule:
+    - cron: "17 4 * * *"
+
+permissions:
+  contents: write
+
+jobs:
+  update-scholar:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install scraper dependencies
+        run: pip install -r requirements-scholar.txt
+
+      - name: Fetch Google Scholar snapshot
+        env:
+          SCHOLAR_AUTHOR_NAME: Lorenzo Pes
+          SCHOLAR_AFFILIATION_HINT: Eindhoven University of Technology
+          SCHOLAR_USER_ID: ${{ secrets.SCHOLAR_USER_ID }}
+        run: python scripts/fetch_scholar.py
+
+      - name: Commit updated snapshot
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "chore: update Google Scholar snapshot"
+          file_pattern: data/scholar.json
