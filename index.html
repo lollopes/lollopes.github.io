@@ -1,11 +1,160 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hello World</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Research Portfolio</title>
+  <meta name="description" content="Portfolio website for a researcher.">
+  <link rel="preconnect" href="https://images.squarespace-cdn.com" crossorigin>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <h1>Hello World!</h1>
+  <header class="topbar">
+    <a class="brand" href="#home">Researcher Portfolio</a>
+    <button class="menu-toggle" aria-expanded="false" aria-controls="main-nav">Menu</button>
+    <nav id="main-nav" class="main-nav" aria-label="Primary navigation">
+      <a href="#home">Home</a>
+      <a href="#cv">CV</a>
+      <a href="#projects">Projects</a>
+      <a href="#publications">Publication</a>
+      <a href="#contacts">Contacts</a>
+    </nav>
+  </header>
+
+  <main>
+    <section id="home" class="panel panel-home">
+      <div class="overlay"></div>
+      <div class="content">
+        <p class="eyebrow">Computational Research</p>
+        <h1>Dr. Ada Rivera</h1>
+        <p class="lead">Interpretable machine learning, neural interfaces, and robust sensing systems for real-world science.</p>
+      </div>
+    </section>
+
+    <section id="cv" class="panel panel-cv">
+      <div class="overlay"></div>
+      <div class="content">
+        <h2>CV</h2>
+        <div class="card-grid two-up">
+          <article class="card">
+            <h3>Current Position</h3>
+            <p>Associate Professor, Department of Intelligent Systems, Horizon Institute (2022-present).</p>
+          </article>
+          <article class="card">
+            <h3>Education</h3>
+            <p>PhD in Computer Science, Polytechnic University (2016). MSc in Applied Mathematics (2011).</p>
+          </article>
+          <article class="card">
+            <h3>Research Interests</h3>
+            <p>Causal representation learning, bio-inspired computation, edge AI for sensor networks.</p>
+          </article>
+          <article class="card">
+            <h3>Awards</h3>
+            <p>National Science Fellowship (2024), Early Career Impact Award (2021), Best Paper (2019).</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section id="projects" class="panel panel-projects">
+      <div class="overlay"></div>
+      <div class="content">
+        <h2>Projects</h2>
+        <div class="card-grid">
+          <article class="card">
+            <h3>Project Atlas</h3>
+            <p>Explainable multimodal models for clinical decision support with uncertainty calibration.</p>
+          </article>
+          <article class="card">
+            <h3>Signal Forest</h3>
+            <p>Low-power, on-device anomaly detection pipeline for distributed acoustic monitoring.</p>
+          </article>
+          <article class="card">
+            <h3>OpenCortex</h3>
+            <p>Open-source toolkit for benchmarking neural decoding methods across labs and devices.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section id="publications" class="panel panel-publications">
+      <div class="overlay"></div>
+      <div class="content">
+        <h2>Publication</h2>
+        <div class="list">
+          <article class="list-item">
+            <h3>Rivera, A., et al. (2025)</h3>
+            <p>"Trust-aware representation learning for noisy biosignals." Journal of Machine Intelligence.</p>
+          </article>
+          <article class="list-item">
+            <h3>Rivera, A., Patel, N. (2024)</h3>
+            <p>"Causal priors in adaptive sensing." Proceedings of NeurIPS.</p>
+          </article>
+          <article class="list-item">
+            <h3>Rivera, A., Kim, J., et al. (2023)</h3>
+            <p>"Resource-constrained neural decoding at the edge." Nature Computational Science.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section id="contacts" class="panel panel-contacts">
+      <div class="overlay"></div>
+      <div class="content">
+        <h2>Contacts</h2>
+        <div class="card-grid two-up">
+          <article class="card">
+            <h3>Email</h3>
+            <p><a href="mailto:ada.rivera@researchlab.org">ada.rivera@researchlab.org</a></p>
+          </article>
+          <article class="card">
+            <h3>Office</h3>
+            <p>Room 4.17, Intelligent Systems Building, Amsterdam.</p>
+          </article>
+          <article class="card">
+            <h3>Profiles</h3>
+            <p><a href="#">Google Scholar</a> | <a href="#">ORCID</a> | <a href="#">GitHub</a></p>
+          </article>
+          <article class="card">
+            <h3>Collaborations</h3>
+            <p>Open to multidisciplinary projects in AI, neuroscience, and digital health.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const menuToggle = document.querySelector('.menu-toggle');
+    const nav = document.querySelector('.main-nav');
+    const links = [...document.querySelectorAll('.main-nav a')];
+    const sections = [...document.querySelectorAll('main section')];
+
+    menuToggle.addEventListener('click', () => {
+      const expanded = menuToggle.getAttribute('aria-expanded') === 'true';
+      menuToggle.setAttribute('aria-expanded', String(!expanded));
+      nav.classList.toggle('open');
+    });
+
+    links.forEach((link) => {
+      link.addEventListener('click', () => {
+        nav.classList.remove('open');
+        menuToggle.setAttribute('aria-expanded', 'false');
+      });
+    });
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (!entry.isIntersecting) return;
+        const id = entry.target.getAttribute('id');
+        links.forEach((link) => {
+          const active = link.getAttribute('href') === `#${id}`;
+          link.classList.toggle('active', active);
+        });
+      });
+    }, { threshold: 0.55 });
+
+    sections.forEach((section) => observer.observe(section));
+  </script>
 </body>
 </html>
