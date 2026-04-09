@@ -33,8 +33,8 @@
             <p class="lead">Doctoral Candidate in Electrical Engineering at Eindhoven University of Technology, working on hardware-software co-design for spiking and artificial neural networks in physical devices, with a focus on efficient on-device continual learning.</p>
             <div class="hero-links">
               <a href="mailto:l.pes@tue.nl">Email</a>
-              <a href="https://research.tue.nl/en/persons/lorenzo-pes/">TU/e Profile</a>
-              <a href="https://scholar.google.com/scholar?q=%22Lorenzo+Pes%22">Scholar</a>
+              <a data-profile-link="tue" href="#">TU/e Profile</a>
+              <a data-profile-link="scholar" href="#">Scholar</a>
             </div>
           </div>
           <aside class="hero-aside">
@@ -176,7 +176,6 @@
       <div class="overlay"></div>
       <div class="content">
         <h2>Publications</h2>
-        <p class="publication-source">Live data from OpenAlex, with direct profile links to Google Scholar and TU/e.</p>
         <div class="card-grid three-up publication-metrics" id="publication-metrics">
           <article class="card">
             <h3>Total Citations</h3>
@@ -192,9 +191,9 @@
           </article>
         </div>
         <div class="hero-links publication-links">
-          <a href="https://scholar.google.com/scholar?q=%22Lorenzo+Pes%22">Google Scholar</a>
-          <a href="https://research.tue.nl/en/persons/lorenzo-pes/">TU/e Publications</a>
-          <a href="https://orcid.org/0000-0002-8151-9327">ORCID</a>
+          <a data-profile-link="scholar" href="#">Google Scholar</a>
+          <a data-profile-link="tue" href="#">TU/e Publications</a>
+          <a data-profile-link="orcid" href="#">ORCID</a>
         </div>
         <div class="list" id="publication-list">
           <article class="list-item">
@@ -220,7 +219,7 @@
           </article>
           <article class="card">
             <h3>Profiles</h3>
-            <p><a href="https://research.tue.nl/en/persons/lorenzo-pes/">TU/e Research Portal</a> | <a href="https://orcid.org/0000-0002-8151-9327">ORCID</a> | <a href="https://scholar.google.com/scholar?q=%22Lorenzo+Pes%22">Google Scholar</a></p>
+            <p><a data-profile-link="tue" href="#">TU/e Research Portal</a> | <a data-profile-link="orcid" href="#">ORCID</a> | <a data-profile-link="scholar" href="#">Google Scholar</a></p>
           </article>
           <article class="card">
             <h3>Professional Snapshot</h3>
@@ -238,6 +237,8 @@
     const sections = [...document.querySelectorAll('main section')];
     const publicationList = document.querySelector('#publication-list');
     const publicationMetrics = document.querySelector('#publication-metrics');
+    const profileLinks = [...document.querySelectorAll('[data-profile-link]')];
+    const authorOrcid = '0000-0002-8151-9327';
 
     menuToggle.addEventListener('click', () => {
       const expanded = menuToggle.getAttribute('aria-expanded') === 'true';
@@ -267,12 +268,93 @@
 
     const formatNumber = (value) => new Intl.NumberFormat('en-US').format(value || 0);
 
-    const setMetrics = (summaryStats) => {
+    const toSearchQuery = (value) => encodeURIComponent(`"${value}"`);
+
+    const slugify = (value) => value
+      .toLowerCase()
+      .normalize('NFKD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/^-+|-+$/g, '');
+
+    const normalizeTitle = (value) => (value || '')
+      .toLowerCase()
+      .normalize('NFKD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .replace(/[^a-z0-9]+/g, ' ')
+      .replace(/\s+/g, ' ')
+      .trim();
+
+    const workPreferenceScore = (work) => {
+      const type = (work.type || '').toLowerCase();
+      const locationType = (work.primary_location?.source?.type || '').toLowerCase();
+
+      return [
+        type !== 'preprint',
+        Boolean(work.doi),
+        Boolean(work.primary_location?.landing_page_url),
+        locationType === 'journal',
+        locationType === 'conference',
+        work.cited_by_count ?? 0,
+        work.publication_year ?? 0
+      ];
+    };
+
+    const isPreferredWork = (candidate, current) => {
+      const candidateScore = workPreferenceScore(candidate);
+      const currentScore = workPreferenceScore(current);
+
+      for (let index = 0; index < candidateScore.length; index += 1) {
+        if (candidateScore[index] === currentScore[index]) continue;
+        return candidateScore[index] > currentScore[index];
+      }
+
+      return false;
+    };
+
+    const dedupeWorks = (works) => {
+      const groupedWorks = new Map();
+
+      works.forEach((work) => {
+        const key = normalizeTitle(work.title) || work.id;
+        const existing = groupedWorks.get(key);
+
+        if (!existing || isPreferredWork(work, existing)) {
+          groupedWorks.set(key, work);
+        }
+      });
+
+      return [...groupedWorks.values()].sort((left, right) => {
+        const rightDate = right.publication_date || '';
+        const leftDate = left.publication_date || '';
+        return rightDate.localeCompare(leftDate);
+      });
+    };
+
+    const setProfileLinks = (author) => {
+      const displayName = author?.display_name || 'Lorenzo Pes';
+      const linksByType = {
+        scholar: `https://scholar.google.com/scholar?q=${toSearchQuery(displayName)}`,
+        tue: `https://research.tue.nl/en/persons/${slugify(displayName)}`,
+        orcid: author?.orcid || author?.ids?.orcid || `https://orcid.org/${authorOrcid}`
+      };
+
+      profileLinks.forEach((link) => {
+        const profileType = link.dataset.profileLink;
+        const href = linksByType[profileType];
+        if (!href) return;
+        link.href = href;
+      });
+    };
+
+    setProfileLinks();
+
+    const setMetrics = (author) => {
       if (!publicationMetrics) return;
       const metrics = [
-        { label: 'Total Citations', value: formatNumber(summaryStats?.cited_by_count) },
-        { label: 'H-index', value: String(summaryStats?.h_index ?? 0) },
-        { label: 'i10-index', value: String(summaryStats?.i10_index ?? 0) }
+        { label: 'Total Citations', value: formatNumber(author?.cited_by_count) },
+        { label: 'H-index', value: String(author?.summary_stats?.h_index ?? 0) },
+        { label: 'i10-index', value: String(author?.summary_stats?.i10_index ?? 0) }
       ];
 
       publicationMetrics.innerHTML = metrics.map((metric) => `
@@ -333,19 +415,20 @@
 
     const loadPublications = async () => {
       try {
-        const authorResponse = await fetch('https://api.openalex.org/authors?filter=orcid:0000-0002-8151-9327');
+        const authorResponse = await fetch(`https://api.openalex.org/authors?filter=orcid:${authorOrcid}`);
         if (!authorResponse.ok) throw new Error('Failed to load author profile');
         const authorData = await authorResponse.json();
         const author = authorData.results?.[0];
         if (!author?.id) throw new Error('Author profile not found');
 
-        setMetrics(author.summary_stats);
+        setMetrics(author);
+        setProfileLinks(author);
 
         const authorFilter = encodeURIComponent(`author.id:${author.id}`);
-        const worksResponse = await fetch(`https://api.openalex.org/works?filter=${authorFilter}&sort=publication_date:desc&per-page=12`);
+        const worksResponse = await fetch(`https://api.openalex.org/works?filter=${authorFilter}&sort=publication_date:desc&per-page=50`);
         if (!worksResponse.ok) throw new Error('Failed to load publications');
         const worksData = await worksResponse.json();
-        renderPublications(worksData.results || []);
+        renderPublications(dedupeWorks(worksData.results || []).slice(0, 12));
       } catch (error) {
         renderPublicationError();
       }
