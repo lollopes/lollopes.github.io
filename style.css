@@ -111,7 +111,8 @@ main {
 }
 
 .panel-home { background-image: var(--home-bg); }
-.panel-cv { background-image: var(--alt-bg); }
+.panel-career { background-image: var(--home-bg); }
+.panel-education { background-image: var(--alt-bg); }
 .panel-projects { background-image: var(--home-bg); }
 .panel-publications { background-image: var(--alt-bg); }
 .panel-contacts { background-image: var(--home-bg); }
@@ -260,6 +261,49 @@ p {
 .list {
   display: grid;
   gap: 0.9rem;
+}
+
+.publication-source {
+  color: var(--accent-strong);
+  margin-bottom: 0.85rem;
+}
+
+.publication-metrics {
+  margin-bottom: 1rem;
+}
+
+.publication-links {
+  margin-top: 0;
+  margin-bottom: 1.1rem;
+}
+
+.career-list {
+  gap: 1rem;
+}
+
+.career-item {
+  padding-bottom: 0.95rem;
+}
+
+.career-item .career-role {
+  margin-bottom: 0.15rem;
+  color: #e8f2f5;
+}
+
+.career-item .career-meta {
+  margin-bottom: 0.7rem;
+  font-size: 0.93rem;
+  color: var(--accent-strong);
+}
+
+.career-item ul {
+  margin: 0 0 0.75rem;
+  padding-left: 1.2rem;
+}
+
+.career-item li {
+  margin-bottom: 0.25rem;
+  color: var(--muted);
 }
 
 a {

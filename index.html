@@ -14,7 +14,8 @@
     <button class="menu-toggle" aria-expanded="false" aria-controls="main-nav">Menu</button>
     <nav id="main-nav" class="main-nav" aria-label="Primary navigation">
       <a href="#home">Home</a>
-      <a href="#cv">CV</a>
+      <a href="#career">Career</a>
+      <a href="#education">Education</a>
       <a href="#projects">Projects</a>
       <a href="#publications">Publications</a>
       <a href="#contacts">Contact</a>
@@ -54,26 +55,97 @@
       </div>
     </section>
 
-    <section id="cv" class="panel panel-cv">
+    <section id="career" class="panel panel-career">
       <div class="overlay"></div>
       <div class="content">
-        <h2>CV</h2>
-        <div class="card-grid two-up">
-          <article class="card">
-            <h3>Current Position</h3>
-            <p>Doctoral Candidate, Electrical Engineering, Electronic Systems at TU/e, affiliated with the Neuromorphic Edge Computing Systems Lab.</p>
+        <h2>Career</h2>
+        <div class="list career-list">
+          <article class="list-item career-item">
+            <h3>Eindhoven University of Technology</h3>
+            <p class="career-role"><strong>Doctoral Candidate</strong> · Full-time</p>
+            <p class="career-meta">Oct 2023 - Present · Eindhoven, North Brabant, Netherlands</p>
+            <ul>
+              <li>Neuromorphic engineering.</li>
+              <li>Online and continual learning.</li>
+              <li>Hardware/software co-design.</li>
+              <li>Digital and analog hardware design.</li>
+              <li>Photonic devices.</li>
+            </ul>
           </article>
-          <article class="card">
-            <h3>Education</h3>
-            <p>MSc in Electrical Engineering with a microelectronics specialization from Delft University of Technology (awarded September 29, 2023), following a BEng in Electrical Engineering with a VLSI/electronics specialization from Concordia University (awarded December 8, 2020).</p>
+
+          <article class="list-item career-item">
+            <h3>Cents</h3>
+            <p class="career-role"><strong>Machine Learning Engineer</strong> · Freelance</p>
+            <p class="career-meta">Oct 2023 - Jun 2025</p>
+            <ul>
+              <li>Recommendation systems.</li>
+              <li>Neural collaborative filtering.</li>
+              <li>Reinforcement learning for recommendation systems.</li>
+            </ul>
+            <p class="career-role"><strong>Back End Developer</strong></p>
+            <p class="career-meta">Sep 2022 - Oct 2023</p>
+            <ul>
+              <li>SQL databases.</li>
+              <li>Looker Studio.</li>
+            </ul>
           </article>
-          <article class="card">
-            <h3>Research Profile</h3>
-            <p>Research centers on neuromorphic technologies, forward-only learning, spiking neural networks, and physical AI systems that can learn efficiently at the edge.</p>
+
+          <article class="list-item career-item">
+            <h3>IBM Research</h3>
+            <p class="career-role"><strong>Research Internship</strong> · Internship</p>
+            <p class="career-meta">Sep 2022 - Feb 2023 · Zurich, Switzerland</p>
+            <ul>
+              <li>NeuroAI toolkit.</li>
+              <li>Spiking neural network development in PyTorch.</li>
+              <li>Custom training algorithm design.</li>
+              <li>Online Spatio Temporal Learning implementation in the HERMES neuromorphic chip.</li>
+              <li>Forward training algorithm design for spiking RNNs.</li>
+            </ul>
+            <p><a href="https://research.ibm.com/publications/online-spatio-temporal-learning-with-target-projection">Online Spatio-Temporal Learning with Target Projection</a></p>
           </article>
-          <article class="card">
-            <h3>Technical Background</h3>
-            <p>Experience spans board design in KiCad, digital design in Verilog, embedded programming in C/C++, analog design in Cadence, and deployment of artificial and spiking neural networks in PyTorch and Python.</p>
+
+          <article class="list-item career-item">
+            <h3>Teletecnica Srl</h3>
+            <p class="career-role"><strong>Hardware Engineer</strong> · Internship</p>
+            <p class="career-meta">Feb 2021 - Aug 2021 · Sigillo, Umbria, Italy</p>
+            <ul>
+              <li>Full PCB design in KiCad.</li>
+              <li>Battery monitor design for UPS systems measuring voltage, current, and temperature across 12 batteries via RS485.</li>
+              <li>Relay and digital reading module development for a rectifier system.</li>
+              <li>User interface creation with LVGL (C) for managing RS485 boards on Raspberry Pi touchscreens.</li>
+              <li>Embedded programming using STM32CubeIDE in C.</li>
+            </ul>
+          </article>
+
+          <article class="list-item career-item">
+            <h3>Agence de mobilite durable</h3>
+            <p class="career-role"><strong>Hardware Engineer</strong> · Internship</p>
+            <p class="career-meta">Oct 2019 - Apr 2020 · Montreal, Quebec, Canada</p>
+            <ul>
+              <li>PCB design in Eagle for parking status display devices using LoRa and LoRaWAN.</li>
+              <li>Integration of battery management, LED drivers, solar cell interface, and LoRa module.</li>
+              <li>STM32 embedded C firmware development for BMS and LoRa communication.</li>
+              <li>Hardware test campaigns with oscilloscopes, function generators, and power supply units.</li>
+            </ul>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section id="education" class="panel panel-education">
+      <div class="overlay"></div>
+      <div class="content">
+        <h2>Education</h2>
+        <div class="list">
+          <article class="list-item career-item">
+            <h3>Delft University of Technology</h3>
+            <p class="career-role"><strong>Master of Science (MS)</strong> · Electrical Engineering: Microelectronics</p>
+            <p class="career-meta">Sep 2021 - Sep 2023</p>
+          </article>
+          <article class="list-item career-item">
+            <h3>Concordia University</h3>
+            <p class="career-role"><strong>Bachelor of Engineering</strong> · Electrical Engineering, Electrical, Electronics and Communications Engineering</p>
+            <p class="career-meta">Sep 2017 - Dec 2020</p>
           </article>
         </div>
       </div>
@@ -104,18 +176,30 @@
       <div class="overlay"></div>
       <div class="content">
         <h2>Publications</h2>
-        <div class="list">
-          <article class="list-item">
-            <h3>Pes, L., Yin, B., Stuijk, S., &amp; Corradi, F. (2026)</h3>
-            <p><a href="https://research.tue.nl/en/publications/traces-propagation-memory-efficient-and-scalable-forward-only-lea-2/">Traces propagation: memory-efficient and scalable forward-only learning in spiking neural networks</a>, <em>Neuromorphic Computing and Engineering</em>.</p>
+        <p class="publication-source">Live data from OpenAlex, with direct profile links to Google Scholar and TU/e.</p>
+        <div class="card-grid three-up publication-metrics" id="publication-metrics">
+          <article class="card">
+            <h3>Total Citations</h3>
+            <p>Loading...</p>
           </article>
-          <article class="list-item">
-            <h3>Pes, L., Dehbashizadeh Chehreghan, M., Luiken, R., Stuijk, S., Stabile, R., &amp; Corradi, F. (2025)</h3>
-            <p><a href="https://research.tue.nl/en/publications/hardware-in-the-loop-training-of-a-4f-optical-correlator-with-log/">Hardware-In-The-Loop Training of a 4f Optical Correlator with Logarithmic Complexity Reduction for CNNs</a>, presented at OFC 2025.</p>
+          <article class="card">
+            <h3>H-index</h3>
+            <p>Loading...</p>
           </article>
+          <article class="card">
+            <h3>i10-index</h3>
+            <p>Loading...</p>
+          </article>
+        </div>
+        <div class="hero-links publication-links">
+          <a href="https://scholar.google.com/scholar?q=%22Lorenzo+Pes%22">Google Scholar</a>
+          <a href="https://research.tue.nl/en/persons/lorenzo-pes/">TU/e Publications</a>
+          <a href="https://orcid.org/0000-0002-8151-9327">ORCID</a>
+        </div>
+        <div class="list" id="publication-list">
           <article class="list-item">
-            <h3>Pes, L., Luiken, R., Corradi, F., &amp; Frenkel, C. (2024)</h3>
-            <p><a href="https://research.tue.nl/en/publications/active-dendrites-enable-efficient-continual-learning-in-time-to-f-2/">Active Dendrites Enable Efficient Continual Learning in Time-To-First-Spike Neural Networks</a>, IEEE AICAS 2024.</p>
+            <h3>Loading publications...</h3>
+            <p>Please wait while the latest records are fetched.</p>
           </article>
         </div>
       </div>
@@ -152,6 +236,8 @@
     const nav = document.querySelector('.main-nav');
     const links = [...document.querySelectorAll('.main-nav a')];
     const sections = [...document.querySelectorAll('main section')];
+    const publicationList = document.querySelector('#publication-list');
+    const publicationMetrics = document.querySelector('#publication-metrics');
 
     menuToggle.addEventListener('click', () => {
       const expanded = menuToggle.getAttribute('aria-expanded') === 'true';
@@ -178,6 +264,94 @@
     }, { threshold: 0.55 });
 
     sections.forEach((section) => observer.observe(section));
+
+    const formatNumber = (value) => new Intl.NumberFormat('en-US').format(value || 0);
+
+    const setMetrics = (summaryStats) => {
+      if (!publicationMetrics) return;
+      const metrics = [
+        { label: 'Total Citations', value: formatNumber(summaryStats?.cited_by_count) },
+        { label: 'H-index', value: String(summaryStats?.h_index ?? 0) },
+        { label: 'i10-index', value: String(summaryStats?.i10_index ?? 0) }
+      ];
+
+      publicationMetrics.innerHTML = metrics.map((metric) => `
+        <article class="card">
+          <h3>${metric.label}</h3>
+          <p>${metric.value}</p>
+        </article>
+      `).join('');
+    };
+
+    const renderPublications = (works) => {
+      if (!publicationList) return;
+      if (!works.length) {
+        publicationList.innerHTML = `
+          <article class="list-item">
+            <h3>No publications found</h3>
+            <p>Try the Google Scholar link above for the latest list.</p>
+          </article>
+        `;
+        return;
+      }
+
+      publicationList.innerHTML = works.map((work) => {
+        const year = work.publication_year || 'n.d.';
+        const title = work.title || 'Untitled';
+        const venue = work.primary_location?.source?.display_name || 'Venue not specified';
+        const citations = work.cited_by_count ?? 0;
+        const landingPageUrl = work.primary_location?.landing_page_url;
+        const doiUrl = work.doi
+          ? `https://doi.org/${work.doi.replace('https://doi.org/', '').replace('http://doi.org/', '')}`
+          : null;
+        const url = landingPageUrl || doiUrl;
+
+        return `
+          <article class="list-item">
+            <h3>${year} · ${title}</h3>
+            <p><em>${venue}</em> · Citations: ${formatNumber(citations)}</p>
+            ${url ? `<p><a href="${url}">View publication</a></p>` : ''}
+          </article>
+        `;
+      }).join('');
+    };
+
+    const renderPublicationError = () => {
+      if (!publicationList || !publicationMetrics) return;
+      publicationMetrics.innerHTML = `
+        <article class="card"><h3>Total Citations</h3><p>Unavailable</p></article>
+        <article class="card"><h3>H-index</h3><p>Unavailable</p></article>
+        <article class="card"><h3>i10-index</h3><p>Unavailable</p></article>
+      `;
+      publicationList.innerHTML = `
+        <article class="list-item">
+          <h3>Live publication feed unavailable</h3>
+          <p>The profile links above are still available for direct access.</p>
+        </article>
+      `;
+    };
+
+    const loadPublications = async () => {
+      try {
+        const authorResponse = await fetch('https://api.openalex.org/authors?filter=orcid:0000-0002-8151-9327');
+        if (!authorResponse.ok) throw new Error('Failed to load author profile');
+        const authorData = await authorResponse.json();
+        const author = authorData.results?.[0];
+        if (!author?.id) throw new Error('Author profile not found');
+
+        setMetrics(author.summary_stats);
+
+        const authorFilter = encodeURIComponent(`author.id:${author.id}`);
+        const worksResponse = await fetch(`https://api.openalex.org/works?filter=${authorFilter}&sort=publication_date:desc&per-page=12`);
+        if (!worksResponse.ok) throw new Error('Failed to load publications');
+        const worksData = await worksResponse.json();
+        renderPublications(worksData.results || []);
+      } catch (error) {
+        renderPublicationError();
+      }
+    };
+
+    loadPublications();
   </script>
 </body>
 </html>
