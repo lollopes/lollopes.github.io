@@ -3,21 +3,21 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Research Portfolio</title>
-  <meta name="description" content="Portfolio website for a researcher.">
+  <title>Lorenzo Pes | Researcher</title>
+  <meta name="description" content="Website for Lorenzo Pes, doctoral candidate in Electrical Engineering at Eindhoven University of Technology.">
   <link rel="preconnect" href="https://images.squarespace-cdn.com" crossorigin>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
   <header class="topbar">
-    <a class="brand" href="#home">Researcher Portfolio</a>
+    <a class="brand" href="#home" aria-label="Lorenzo Pes home">LP</a>
     <button class="menu-toggle" aria-expanded="false" aria-controls="main-nav">Menu</button>
     <nav id="main-nav" class="main-nav" aria-label="Primary navigation">
       <a href="#home">Home</a>
       <a href="#cv">CV</a>
       <a href="#projects">Projects</a>
-      <a href="#publications">Publication</a>
-      <a href="#contacts">Contacts</a>
+      <a href="#publications">Publications</a>
+      <a href="#contacts">Contact</a>
     </nav>
   </header>
 
@@ -25,9 +25,32 @@
     <section id="home" class="panel panel-home">
       <div class="overlay"></div>
       <div class="content">
-        <p class="eyebrow">Computational Research</p>
-        <h1>Dr. Ada Rivera</h1>
-        <p class="lead">Interpretable machine learning, neural interfaces, and robust sensing systems for real-world science.</p>
+        <div class="hero-layout">
+          <div class="hero-copy">
+            <p class="eyebrow">Neuromorphic AI Research</p>
+            <h1>Lorenzo Pes</h1>
+            <p class="lead">Doctoral Candidate in Electrical Engineering at Eindhoven University of Technology, working on hardware-software co-design for spiking and artificial neural networks in physical devices, with a focus on efficient on-device continual learning.</p>
+            <div class="hero-links">
+              <a href="mailto:l.pes@tue.nl">Email</a>
+              <a href="https://research.tue.nl/en/persons/lorenzo-pes/">TU/e Profile</a>
+              <a href="https://scholar.google.com/scholar?q=%22Lorenzo+Pes%22">Scholar</a>
+            </div>
+          </div>
+          <aside class="hero-aside">
+            <div class="hero-panel">
+              <p class="hero-label">Based In</p>
+              <p class="hero-value">Eindhoven</p>
+            </div>
+            <div class="hero-panel">
+              <p class="hero-label">Lab</p>
+              <p class="hero-value">Neuromorphic Edge Computing Systems</p>
+            </div>
+            <div class="hero-panel">
+              <p class="hero-label">Focus</p>
+              <p class="hero-value">SNNs, forward-only learning, photonic AI</p>
+            </div>
+          </aside>
+        </div>
       </div>
     </section>
 
@@ -38,19 +61,19 @@
         <div class="card-grid two-up">
           <article class="card">
             <h3>Current Position</h3>
-            <p>Associate Professor, Department of Intelligent Systems, Horizon Institute (2022-present).</p>
+            <p>Doctoral Candidate, Electrical Engineering, Electronic Systems at TU/e, affiliated with the Neuromorphic Edge Computing Systems Lab.</p>
           </article>
           <article class="card">
             <h3>Education</h3>
-            <p>PhD in Computer Science, Polytechnic University (2016). MSc in Applied Mathematics (2011).</p>
+            <p>MSc in Electrical Engineering with a microelectronics specialization from Delft University of Technology (awarded September 29, 2023), following a BEng in Electrical Engineering with a VLSI/electronics specialization from Concordia University (awarded December 8, 2020).</p>
           </article>
           <article class="card">
-            <h3>Research Interests</h3>
-            <p>Causal representation learning, bio-inspired computation, edge AI for sensor networks.</p>
+            <h3>Research Profile</h3>
+            <p>Research centers on neuromorphic technologies, forward-only learning, spiking neural networks, and physical AI systems that can learn efficiently at the edge.</p>
           </article>
           <article class="card">
-            <h3>Awards</h3>
-            <p>National Science Fellowship (2024), Early Career Impact Award (2021), Best Paper (2019).</p>
+            <h3>Technical Background</h3>
+            <p>Experience spans board design in KiCad, digital design in Verilog, embedded programming in C/C++, analog design in Cadence, and deployment of artificial and spiking neural networks in PyTorch and Python.</p>
           </article>
         </div>
       </div>
@@ -62,16 +85,16 @@
         <h2>Projects</h2>
         <div class="card-grid">
           <article class="card">
-            <h3>Project Atlas</h3>
-            <p>Explainable multimodal models for clinical decision support with uncertainty calibration.</p>
+            <h3>Continual Learning in Spiking Neural Networks</h3>
+            <p>Investigating biologically inspired learning rules and active dendrites to reduce catastrophic forgetting in time-to-first-spike neural networks.</p>
           </article>
           <article class="card">
-            <h3>Signal Forest</h3>
-            <p>Low-power, on-device anomaly detection pipeline for distributed acoustic monitoring.</p>
+            <h3>Forward-Only Learning</h3>
+            <p>Developing memory-efficient and scalable alternatives to backpropagation through time for training spiking neural networks on dynamic signals.</p>
           </article>
           <article class="card">
-            <h3>OpenCortex</h3>
-            <p>Open-source toolkit for benchmarking neural decoding methods across labs and devices.</p>
+            <h3>Hardware-in-the-Loop Photonic Training</h3>
+            <p>Exploring optical correlators and hardware-aware training pipelines that combine neuromorphic principles with physical photonic systems.</p>
           </article>
         </div>
       </div>
@@ -80,19 +103,19 @@
     <section id="publications" class="panel panel-publications">
       <div class="overlay"></div>
       <div class="content">
-        <h2>Publication</h2>
+        <h2>Publications</h2>
         <div class="list">
           <article class="list-item">
-            <h3>Rivera, A., et al. (2025)</h3>
-            <p>"Trust-aware representation learning for noisy biosignals." Journal of Machine Intelligence.</p>
+            <h3>Pes, L., Yin, B., Stuijk, S., &amp; Corradi, F. (2026)</h3>
+            <p><a href="https://research.tue.nl/en/publications/traces-propagation-memory-efficient-and-scalable-forward-only-lea-2/">Traces propagation: memory-efficient and scalable forward-only learning in spiking neural networks</a>, <em>Neuromorphic Computing and Engineering</em>.</p>
           </article>
           <article class="list-item">
-            <h3>Rivera, A., Patel, N. (2024)</h3>
-            <p>"Causal priors in adaptive sensing." Proceedings of NeurIPS.</p>
+            <h3>Pes, L., Dehbashizadeh Chehreghan, M., Luiken, R., Stuijk, S., Stabile, R., &amp; Corradi, F. (2025)</h3>
+            <p><a href="https://research.tue.nl/en/publications/hardware-in-the-loop-training-of-a-4f-optical-correlator-with-log/">Hardware-In-The-Loop Training of a 4f Optical Correlator with Logarithmic Complexity Reduction for CNNs</a>, presented at OFC 2025.</p>
           </article>
           <article class="list-item">
-            <h3>Rivera, A., Kim, J., et al. (2023)</h3>
-            <p>"Resource-constrained neural decoding at the edge." Nature Computational Science.</p>
+            <h3>Pes, L., Luiken, R., Corradi, F., &amp; Frenkel, C. (2024)</h3>
+            <p><a href="https://research.tue.nl/en/publications/active-dendrites-enable-efficient-continual-learning-in-time-to-f-2/">Active Dendrites Enable Efficient Continual Learning in Time-To-First-Spike Neural Networks</a>, IEEE AICAS 2024.</p>
           </article>
         </div>
       </div>
@@ -101,23 +124,23 @@
     <section id="contacts" class="panel panel-contacts">
       <div class="overlay"></div>
       <div class="content">
-        <h2>Contacts</h2>
+        <h2>Contact</h2>
         <div class="card-grid two-up">
           <article class="card">
             <h3>Email</h3>
-            <p><a href="mailto:ada.rivera@researchlab.org">ada.rivera@researchlab.org</a></p>
+            <p><a href="mailto:l.pes@tue.nl">l.pes@tue.nl</a></p>
           </article>
           <article class="card">
-            <h3>Office</h3>
-            <p>Room 4.17, Intelligent Systems Building, Amsterdam.</p>
+            <h3>Affiliation</h3>
+            <p>Department of Electrical Engineering, Eindhoven University of Technology, Eindhoven, the Netherlands.</p>
           </article>
           <article class="card">
             <h3>Profiles</h3>
-            <p><a href="#">Google Scholar</a> | <a href="#">ORCID</a> | <a href="#">GitHub</a></p>
+            <p><a href="https://research.tue.nl/en/persons/lorenzo-pes/">TU/e Research Portal</a> | <a href="https://orcid.org/0000-0002-8151-9327">ORCID</a> | <a href="https://scholar.google.com/scholar?q=%22Lorenzo+Pes%22">Google Scholar</a></p>
           </article>
           <article class="card">
-            <h3>Collaborations</h3>
-            <p>Open to multidisciplinary projects in AI, neuroscience, and digital health.</p>
+            <h3>Professional Snapshot</h3>
+            <p>Background includes internships in embedded hardware design and a research internship at IBM Zurich, alongside work spanning neuromorphic AI, embedded systems, and microelectronics.</p>
           </article>
         </div>
       </div>

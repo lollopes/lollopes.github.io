@@ -1,11 +1,14 @@
 :root {
-  --bg-deep: #0d1a24;
-  --bg-mid: #183043;
-  --text: #f5f7f8;
-  --muted: #c8d5df;
-  --accent: #7ad7d1;
-  --card: rgba(10, 24, 34, 0.66);
-  --card-border: rgba(255, 255, 255, 0.2);
+  --bg-deep: #08111a;
+  --bg-mid: #10293a;
+  --bg-soft: #14374b;
+  --text: #f7f5ef;
+  --muted: #bfd0d8;
+  --accent: #87d8c7;
+  --accent-strong: #d8f26a;
+  --card: rgba(8, 20, 31, 0.72);
+  --card-border: rgba(255, 255, 255, 0.14);
+  --shadow: 0 24px 80px rgba(0, 0, 0, 0.28);
   --home-bg: url('https://images.squarespace-cdn.com/content/v1/5da00d13f096cb70b40ce225/1595728688262-NBFU6LBEKPBT4RXXGLG7/117e%2B-%2BCopy.jpg?format=2500w');
   --alt-bg: url('https://images.squarespace-cdn.com/content/v1/5da00d13f096cb70b40ce225/1595722653638-OU0W3CFKDF64E9LMFG1F/20200530_214643.jpg?format=2500w');
 }
@@ -22,7 +25,8 @@ body {
   margin: 0;
   color: var(--text);
   background: var(--bg-deep);
-  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-family: Georgia, "Times New Roman", serif;
+  line-height: 1.55;
 }
 
 main {
@@ -39,18 +43,26 @@ main {
   align-items: center;
   justify-content: space-between;
   gap: 1rem;
-  padding: 0.9rem 1.2rem;
-  background: rgba(7, 13, 18, 0.66);
-  backdrop-filter: blur(8px);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 1rem 1.2rem;
+  background: rgba(6, 12, 18, 0.72);
+  backdrop-filter: blur(14px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .brand {
   color: var(--text);
   text-decoration: none;
-  font-size: 0.95rem;
-  letter-spacing: 0.08em;
+  width: 2.6rem;
+  height: 2.6rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 999px;
+  font-size: 0.82rem;
+  letter-spacing: 0.16em;
   text-transform: uppercase;
+  background: rgba(255, 255, 255, 0.04);
 }
 
 .main-nav {
@@ -66,6 +78,7 @@ main {
   text-transform: uppercase;
   padding-bottom: 0.2rem;
   border-bottom: 2px solid transparent;
+  font-family: Arial, Helvetica, sans-serif;
 }
 
 .main-nav a:hover,
@@ -80,6 +93,7 @@ main {
   background: rgba(255, 255, 255, 0.05);
   color: var(--text);
   padding: 0.35rem 0.7rem;
+  font-family: Arial, Helvetica, sans-serif;
 }
 
 .panel {
@@ -88,7 +102,7 @@ main {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 6rem 1.2rem 3rem;
+  padding: 6.5rem 1.2rem 3.5rem;
   background-size: cover;
   background-position: center;
   background-attachment: fixed;
@@ -106,8 +120,9 @@ main {
   position: absolute;
   inset: 0;
   background:
-    radial-gradient(circle at 20% 0%, rgba(23, 85, 122, 0.46), transparent 45%),
-    linear-gradient(to bottom, rgba(1, 10, 20, 0.7), rgba(0, 0, 0, 0.7));
+    radial-gradient(circle at 15% 10%, rgba(145, 204, 190, 0.16), transparent 28%),
+    radial-gradient(circle at 85% 15%, rgba(216, 242, 106, 0.14), transparent 22%),
+    linear-gradient(to bottom, rgba(3, 10, 18, 0.56), rgba(3, 9, 16, 0.82));
 }
 
 .content {
@@ -116,28 +131,45 @@ main {
   z-index: 1;
 }
 
+.hero-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1.6fr) minmax(280px, 0.8fr);
+  gap: 1.4rem;
+  align-items: end;
+}
+
+.hero-copy {
+  max-width: 780px;
+}
+
 .eyebrow {
   margin: 0 0 0.6rem;
   letter-spacing: 0.12em;
   text-transform: uppercase;
   font-size: 0.8rem;
-  color: var(--accent);
+  color: var(--accent-strong);
+  font-family: Arial, Helvetica, sans-serif;
 }
 
 h1 {
   margin: 0;
-  font-size: clamp(2.1rem, 5.4vw, 4.6rem);
+  max-width: 10ch;
+  font-size: clamp(3rem, 7vw, 6rem);
+  line-height: 0.96;
+  letter-spacing: -0.04em;
 }
 
 h2 {
   margin-top: 0;
-  margin-bottom: 1rem;
-  font-size: clamp(1.6rem, 3.6vw, 2.8rem);
+  margin-bottom: 1.1rem;
+  font-size: clamp(1.8rem, 3.8vw, 3.1rem);
+  letter-spacing: -0.03em;
 }
 
 h3 {
   margin-top: 0;
-  margin-bottom: 0.45rem;
+  margin-bottom: 0.55rem;
+  font-size: 1.05rem;
 }
 
 p {
@@ -145,15 +177,71 @@ p {
 }
 
 .lead {
-  max-width: 64ch;
-  font-size: clamp(1rem, 1.5vw, 1.3rem);
-  color: #edf4fb;
+  max-width: 58ch;
+  margin: 1.25rem 0 0;
+  font-size: clamp(1.02rem, 1.7vw, 1.34rem);
+  color: #eef3f5;
+}
+
+.hero-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.85rem;
+  margin-top: 1.6rem;
+}
+
+.hero-links a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 2.7rem;
+  padding: 0 1rem;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  background: rgba(6, 16, 26, 0.44);
+  text-decoration: none;
+  color: var(--text);
+  transition: transform 180ms ease, border-color 180ms ease, background 180ms ease;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 0.92rem;
+}
+
+.hero-links a:hover {
+  transform: translateY(-2px);
+  border-color: rgba(216, 242, 106, 0.48);
+  background: rgba(11, 28, 42, 0.64);
+}
+
+.hero-aside {
+  display: grid;
+  gap: 0.85rem;
+}
+
+.hero-panel {
+  padding: 1rem 1rem 0.95rem;
+  border-radius: 18px;
+  background: linear-gradient(180deg, rgba(12, 28, 41, 0.8), rgba(8, 19, 29, 0.74));
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: var(--shadow);
+}
+
+.hero-label {
+  margin-bottom: 0.35rem;
+  color: var(--accent-strong);
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  font-size: 0.72rem;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.hero-value {
+  margin-bottom: 0;
+  font-size: 1.05rem;
 }
 
 .card-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 0.95rem;
+  gap: 1rem;
 }
 
 .two-up {
@@ -164,17 +252,23 @@ p {
 .list-item {
   background: var(--card);
   border: 1px solid var(--card-border);
-  border-radius: 12px;
-  padding: 1rem;
+  border-radius: 18px;
+  padding: 1.15rem;
+  box-shadow: var(--shadow);
 }
 
 .list {
   display: grid;
-  gap: 0.8rem;
+  gap: 0.9rem;
 }
 
 a {
   color: var(--accent);
+}
+
+.card p,
+.list-item p {
+  color: var(--muted);
 }
 
 @media (max-width: 900px) {
@@ -202,6 +296,14 @@ a {
   .card-grid,
   .two-up {
     grid-template-columns: 1fr;
+  }
+
+  .hero-layout {
+    grid-template-columns: 1fr;
+  }
+
+  h1 {
+    max-width: none;
   }
 
   .panel {
