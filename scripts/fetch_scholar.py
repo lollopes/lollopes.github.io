@@ -33,7 +33,7 @@ def configure_proxy() -> None:
 def build_scholar_url(user_id: str | None) -> str:
     if user_id:
         return f"https://scholar.google.com/citations?user={user_id}&hl=en"
-    return f"https://scholar.google.com/scholar?q={quote(f'\"{DEFAULT_NAME}\"')}"
+    return f"https://scholar.google.com/scholar?q={quote(f'"{DEFAULT_NAME}"')}"
 
 
 def score_author(candidate: dict[str, Any]) -> tuple[int, int, int]:
