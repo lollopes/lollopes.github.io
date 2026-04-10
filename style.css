@@ -66,7 +66,7 @@ main {
   z-index: 20;
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: center;
   gap: 1rem;
   padding: 1rem 1.2rem;
   background: rgba(6, 12, 18, 0.72);
@@ -74,24 +74,9 @@ main {
   border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 }
 
-.brand {
-  color: var(--text);
-  text-decoration: none;
-  width: 2.6rem;
-  height: 2.6rem;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  border: 1px solid rgba(255, 255, 255, 0.16);
-  border-radius: 999px;
-  font-size: 0.82rem;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-  background: rgba(255, 255, 255, 0.04);
-}
-
 .main-nav {
   display: flex;
+  justify-content: center;
   gap: 0.95rem;
 }
 
@@ -340,19 +325,22 @@ a {
 @media (max-width: 900px) {
   .menu-toggle {
     display: inline-flex;
+    margin: 0 auto;
   }
 
   .main-nav {
     position: absolute;
     top: 100%;
-    right: 0.9rem;
-    left: 0.9rem;
+    left: 50%;
+    transform: translateX(-50%);
+    width: min(24rem, calc(100% - 1.8rem));
     display: none;
     flex-direction: column;
     padding: 0.8rem;
     background: rgba(7, 13, 18, 0.94);
     border: 1px solid rgba(255, 255, 255, 0.13);
     border-radius: 10px;
+    text-align: center;
   }
 
   .main-nav.open {
