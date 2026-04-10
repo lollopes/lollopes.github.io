@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { width: 100%; height: 100%; overflow: hidden; background: #030805; }
+  canvas { display: block; position: fixed; inset: 0; width: 100%; height: 100%; }
+  .content { position: relative; z-index: 10; height: 100vh; pointer-events: none; }
+</style>
+</head>
+<body>
+<canvas id="c"></canvas>
+<div class="content"></div>
+<script>
+// ═══════════════════════════════════════════════════════════════════
+//  NEUROMORPHIC CIRCUIT BACKGROUND
+//  Cortical topology rendered as silicon / PCB aesthetic:
+//  - IC chip pads for pyramidal cells
+//  - Via holes for interneurons
+//  - Manhattan-routed PCB traces for axons
+//  - Square-wave spikes, capacitor charge bars
+//  - Silicon process layer bands (M1, M2, Poly, Diffusion)
+//  - Nodes-of-Ranvier as bright junction dots
+// ═══════════════════════════════════════════════════════════════════
+
+const canvas = document.getElementById('c');
+const ctx    = canvas.getContext('2d');
+let W, H;
+
+// ── Palette ───────────────────────────────────────────────────
+const P = {
+  bg:          '#030805',
+  gridLine:    'rgba(0,255,65,0.03)',
+  layerBand0:  'rgba(0,255,65,0.018)',
+  layerBand1:  'rgba(0,150,255,0.013)',
+  traceExc:    [0,   220,  80],   // excitatory trace: PCB green
+  traceInh:    [255,  50,  80],   // inhibitory: red reset line
+  traceLong:   [40,  160, 255],   // long-range: metal-2 blue
+  padPyra:     [0,   200,  70],   // pyramidal chip pad
+  padInter:    [40,  180, 255],   // interneuron via
+  padRefract:  [255,  40,  60],   // refractory (discharged)
+  pulseExc:    [180, 255, 120],   // excitatory spike head
+  pulseInh:    [255, 100, 130],   // inhibitory spike head
+  pulseTrail:  [0,   255,  80],   // fading trace
+  gateGlow:    [0,   255,  80],   // transistor gate glow
+  interGlow:   [80,  200, 255],
+  capCharge:   [0,   230,  80],
+  scopeWave:   [0,   255,  80],
+  junctionDot: [200, 255, 150],
+  labelCol:    'rgba(0,255,65,0.18)',
+  etchLine:    'rgba(0,255,65,0.07)',
+  viaRing:     'rgba(40,180,255,0.5)',
+};
+
+// ── Cortical / silicon process layers ─────────────────────────
+const LAYER_DEFS = [
+  { name:'M2',   label:'METAL-2',    yFrac:[0.03,0.12], density:0.25, pyraFrac:0.2  },
+  { name:'M1',   label:'METAL-1',    yFrac:[0.12,0.28], density:0.9,  pyraFrac:0.65 },
+  { name:'POLY', label:'POLY',       yFrac:[0.28,0.44], density:0.75, pyraFrac:0.15 },
+  { name:'DIFF', label:'DIFFUSION',  yFrac:[0.44,0.65], density:1.0,  pyraFrac:0.8  },
+  { name:'NDIF', label:'N-DIFF',     yFrac:[0.65,0.82], density:0.55, pyraFrac:0.55 },
+  { name:'SUB',  label:'SUBSTRATE',  yFrac:[0.82,0.95], density:0.12, pyraFrac:0.0  },
+];
+
+const TOTAL_NEURONS = 72;
+const SPEED         = 0.0012;
+const REFRACTORY    = 48;
+
+let neurons = [], edges = [], traceSegs = [];
+let bgGrad  = null, gridCanvas = null;
+
+// ── Build graph ────────────────────────────────────────────────
+function buildGraph() {
+  neurons=[]; edges=[]; traceSegs=[]; bgGrad=null;
+
+  LAYER_DEFS.forEach((layer, li) => {
+    if (layer.name==='SUB') return;
+    const yMin=H*layer.yFrac[0], yMax=H*layer.yFrac[1];
+    const count=Math.round(TOTAL_NEURONS*layer.density/4.5);
+    for (let i=0; i<count; i++) {
+      const isPyra = Math.random()<layer.pyraFrac;
+      const r      = isPyra ? 5+Math.random()*3.5 : 3.5+Math.random()*2;
+      neurons.push({
+        id:      neurons.length,
+        x:       W*0.04+Math.random()*(W*0.92),
+        y:       yMin+Math.random()*(yMax-yMin),
+        r, isPyra, layer: li,
+        v:       Math.random()*0.2,
+        refract: 0,
+        glow:    0,
+        thresh:  isPyra ? 0.60+Math.random()*0.12 : 0.55+Math.random()*0.10,
+        leak:    0.00042+Math.random()*0.0004,
+        // chip-pad geometry
+        padW:    isPyra ? r*2.4+Math.random()*4 : r*2,
+        padH:    isPyra ? r*2.0+Math.random()*3 : r*2,
+        // etched internal pattern seed
+        etchSeed: Math.random(),
+        // capacitor charge history for scope
+        vHistory: new Float32Array(24),
+        vCursor:  0,
+      });
+    }
+  });
+
+  // Manhattan-routed connections
+  neurons.forEach(ni => {
+    const candidates = neurons
+      .filter(nj=>nj.id!==ni.id)
+      .map(nj=>({nj, d:Math.hypot(nj.x-ni.x,nj.y-ni.y), dL:Math.abs(nj.layer-ni.layer)}))
+      .filter(e=> ni.isPyra ? e.d<W*0.42&&e.dL<=3 : e.d<W*0.18&&e.dL<=2)
+      .sort((a,b)=>a.d-b.d);
+
+    const k = ni.isPyra ? 3+Math.floor(Math.random()*4) : 2+Math.floor(Math.random()*3);
+    for (let c=0; c<Math.min(k,candidates.length); c++) {
+      const {nj,d,dL}=candidates[c];
+      if (edges.find(e=>(e.a===ni.id&&e.b===nj.id)||(e.a===nj.id&&e.b===ni.id))) continue;
+      const seg = makeManhattanRoute(ni.x,ni.y,nj.x,nj.y);
+      edges.push({
+        a:ni.id, b:nj.id,
+        w: ni.isPyra ? 0.18+Math.random()*0.18 : 0.08+Math.random()*0.10,
+        excitatory: ni.isPyra,
+        longRange: d>W*0.24,
+        pulses:[],
+        route: seg,       // pre-baked Manhattan path
+        routeLen: seg.totalLen,
+      });
+    }
+  });
+}
+
+// ── Manhattan routing ──────────────────────────────────────────
+// Route: ax,ay → corner → bx,by using 2 segments (H then V, or V then H)
+// With slight jog for style
+function makeManhattanRoute(ax,ay,bx,by) {
+  const dx=bx-ax, dy=by-ay;
+  // choose H-then-V or V-then-H based on longer axis
+  let pts;
+  if (Math.abs(dx)>Math.abs(dy)) {
+    // go horizontal first, add small jog
+    const jog = (Math.random()-0.5)*Math.min(Math.abs(dy)*0.3, 20);
+    const mx = ax+dx*0.5+jog;
+    pts = [{x:ax,y:ay},{x:mx,y:ay},{x:mx,y:by},{x:bx,y:by}];
+  } else {
+    const jog = (Math.random()-0.5)*Math.min(Math.abs(dx)*0.3, 20);
+    const my = ay+dy*0.5+jog;
+    pts = [{x:ax,y:ay},{x:ax,y:my},{x:bx,y:my},{x:bx,y:by}];
+  }
+  // compute cumulative lengths
+  let totalLen=0;
+  const segs=[];
+  for (let i=0;i<pts.length-1;i++) {
+    const segLen=Math.hypot(pts[i+1].x-pts[i].x, pts[i+1].y-pts[i].y);
+    segs.push({x0:pts[i].x,y0:pts[i].y,x1:pts[i+1].x,y1:pts[i+1].y,len:segLen,cumStart:totalLen});
+    totalLen+=segLen;
+  }
+  return {segs, totalLen, pts};
+}
+
+function routePoint(route, t) {
+  const dist=t*route.totalLen;
+  for (const seg of route.segs) {
+    if (dist<=seg.cumStart+seg.len+0.001) {
+      const localT=(dist-seg.cumStart)/Math.max(seg.len,0.0001);
+      return {
+        x: seg.x0+(seg.x1-seg.x0)*localT,
+        y: seg.y0+(seg.y1-seg.y0)*localT,
+      };
+    }
+  }
+  const last=route.segs[route.segs.length-1];
+  return {x:last.x1,y:last.y1};
+}
+
+// ── Fire ────────────────────────────────────────────────────────
+function fireNeuron(id) {
+  const n=neurons[id];
+  n.v=0; n.refract=REFRACTORY; n.glow=1.0;
+  edges.forEach(e=>{
+    if (e.a===id) e.pulses.push({t:0,w:e.w,excitatory:e.excitatory});
+  });
+}
+
+// ── Spontaneous drive ────────────────────────────────────────────
+function externalDrive(dt) {
+  neurons.forEach(n=>{
+    if (n.refract>0) return;
+    const prob=(n.layer===1||n.layer===3) ? 0.00075 : 0.00028;
+    if (Math.random()<prob*dt) n.v=Math.min(1,n.v+0.35+Math.random()*0.15);
+  });
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  DRAW HELPERS
+// ═══════════════════════════════════════════════════════════════
+
+// Pre-bake static grid to offscreen canvas
+function buildGrid() {
+  gridCanvas=document.createElement('canvas');
+  gridCanvas.width=W; gridCanvas.height=H;
+  const gc=gridCanvas.getContext('2d');
+  // fine dot grid
+  gc.fillStyle=P.gridLine;
+  for (let x=0;x<W;x+=18) {
+    for (let y=0;y<H;y+=18) {
+      gc.fillRect(x,y,1,1);
+    }
+  }
+}
+
+function drawLayerBands() {
+  LAYER_DEFS.forEach((layer,li)=>{
+    const y0=H*layer.yFrac[0], y1=H*layer.yFrac[1];
+    ctx.fillStyle=li%2===0?P.layerBand0:P.layerBand1;
+    ctx.fillRect(0,y0,W,y1-y0);
+    // layer label
+    ctx.fillStyle=P.labelCol;
+    ctx.font=`500 9px "Courier New", monospace`;
+    ctx.fillText(layer.label, 8, y0+13);
+    // top border rule
+    ctx.beginPath();
+    ctx.moveTo(0,y0); ctx.lineTo(W,y0);
+    ctx.strokeStyle='rgba(0,255,65,0.06)';
+    ctx.lineWidth=0.5; ctx.stroke();
+  });
+}
+
+function drawTrace(e) {
+  const col = e.longRange ? P.traceLong : (e.excitatory ? P.traceExc : P.traceInh);
+  const alpha = e.longRange ? 0.07 : 0.09;
+  const lw    = e.longRange ? 0.9 : 1.0;
+
+  ctx.strokeStyle=`rgba(${col[0]},${col[1]},${col[2]},${alpha})`;
+  ctx.lineWidth=lw;
+  ctx.beginPath();
+  const pts=e.route.pts;
+  ctx.moveTo(pts[0].x,pts[0].y);
+  for (let i=1;i<pts.length;i++) ctx.lineTo(pts[i].x,pts[i].y);
+  ctx.stroke();
+
+  // junction dots at corners
+  for (let i=1;i<pts.length-1;i++) {
+    const p=pts[i];
+    ctx.beginPath(); ctx.arc(p.x,p.y,1.2,0,Math.PI*2);
+    ctx.fillStyle=`rgba(${P.junctionDot[0]},${P.junctionDot[1]},${P.junctionDot[2]},0.12)`;
+    ctx.fill();
+  }
+}
+
+function drawPulse(e,p) {
+  const pos=routePoint(e.route,p.t);
+  const col=p.excitatory ? P.pulseExc : P.pulseInh;
+
+  // leading edge: square-wave bright front
+  const r=3.5;
+  ctx.beginPath();
+  ctx.rect(pos.x-r,pos.y-r,r*2,r*2);
+  ctx.fillStyle=`rgba(${col[0]},${col[1]},${col[2]},0.95)`;
+  ctx.fill();
+
+  // bright core pixel
+  ctx.fillStyle='#ffffff';
+  ctx.fillRect(pos.x-1,pos.y-1,2,2);
+
+  // fading trail — draw back along route
+  const trailLen=0.06;
+  const steps=10;
+  for (let s=1;s<=steps;s++) {
+    const tt=Math.max(0,p.t-trailLen*(s/steps));
+    const tp=routePoint(e.route,tt);
+    const a=(1-s/steps)*0.35;
+    ctx.fillStyle=`rgba(${P.pulseTrail[0]},${P.pulseTrail[1]},${P.pulseTrail[2]},${a.toFixed(2)})`;
+    ctx.fillRect(tp.x-1,tp.y-1,2,2);
+  }
+
+  // Ranvier node flash: brighten at ~20% intervals
+  const nodePhase=(p.t*6)%1;
+  if (nodePhase<0.15) {
+    ctx.beginPath(); ctx.arc(pos.x,pos.y,5+nodePhase*8,0,Math.PI*2);
+    const ng=ctx.createRadialGradient(pos.x,pos.y,0,pos.x,pos.y,8);
+    ng.addColorStop(0,`rgba(${col[0]},${col[1]},${col[2]},0.7)`);
+    ng.addColorStop(1,`rgba(${col[0]},${col[1]},${col[2]},0)`);
+    ctx.fillStyle=ng; ctx.fill();
+  }
+}
+
+// Draw IC chip pad (pyramidal neuron)
+function drawChipPad(n) {
+  const ref=n.refract>0;
+  const col=ref ? P.padRefract : P.padPyra;
+  const glowCol=ref ? P.padRefract : P.gateGlow;
+  const hw=n.padW/2, hh=n.padH/2;
+
+  // spike halo
+  if (n.glow>0.01) {
+    const hr=Math.max(hw,hh)+22*n.glow;
+    const hg=ctx.createRadialGradient(n.x,n.y,2,n.x,n.y,hr);
+    hg.addColorStop(0,  `rgba(${glowCol[0]},${glowCol[1]},${glowCol[2]},${(n.glow*0.55).toFixed(2)})`);
+    hg.addColorStop(0.4,`rgba(${glowCol[0]},${glowCol[1]},${glowCol[2]},${(n.glow*0.12).toFixed(2)})`);
+    hg.addColorStop(1,  `rgba(${glowCol[0]},${glowCol[1]},${glowCol[2]},0)`);
+    ctx.beginPath(); ctx.arc(n.x,n.y,hr,0,Math.PI*2);
+    ctx.fillStyle=hg; ctx.fill();
+  }
+
+  // pad background fill
+  ctx.fillStyle=`rgba(${col[0]},${col[1]},${col[2]},${ref?0.12:0.07+n.v*0.08})`;
+  ctx.fillRect(n.x-hw,n.y-hh,n.padW,n.padH);
+
+  // etched internal pattern — cross-hatch lines inside pad
+  const eAlpha=P.etchLine;
+  ctx.save();
+  ctx.beginPath(); ctx.rect(n.x-hw+1,n.y-hh+1,n.padW-2,n.padH-2);
+  ctx.clip();
+  ctx.strokeStyle=`rgba(${col[0]},${col[1]},${col[2]},${ref?0.3:0.18+n.glow*0.15})`;
+  ctx.lineWidth=0.5;
+  // horizontal etch lines
+  const step=Math.max(3,Math.round(3+n.etchSeed*3));
+  for (let dy=-hh;dy<hh;dy+=step) {
+    ctx.beginPath(); ctx.moveTo(n.x-hw,n.y+dy); ctx.lineTo(n.x+hw,n.y+dy);
+    ctx.stroke();
+  }
+  // center cross
+  ctx.lineWidth=0.7;
+  ctx.beginPath(); ctx.moveTo(n.x-hw*0.5,n.y); ctx.lineTo(n.x+hw*0.5,n.y); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(n.x,n.y-hh*0.5); ctx.lineTo(n.x,n.y+hh*0.5); ctx.stroke();
+  ctx.restore();
+
+  // gate symbol: small transistor notch on right edge
+  const gx=n.x+hw, gy=n.y;
+  ctx.beginPath();
+  ctx.moveTo(gx,gy-hh*0.3); ctx.lineTo(gx+3,gy); ctx.lineTo(gx,gy+hh*0.3);
+  ctx.strokeStyle=`rgba(${col[0]},${col[1]},${col[2]},${0.35+n.glow*0.55})`;
+  ctx.lineWidth=1; ctx.stroke();
+
+  // pad border
+  ctx.strokeStyle=`rgba(${col[0]},${col[1]},${col[2]},${ref?0.55:0.28+n.glow*0.6})`;
+  ctx.lineWidth=0.9+n.glow*1.4;
+  ctx.strokeRect(n.x-hw,n.y-hh,n.padW,n.padH);
+
+  // capacitor charge bar (membrane potential meter)
+  if (!ref && n.v>0.05) {
+    const barW=n.padW*0.65, barH=2.5;
+    const bx=n.x-barW/2, by=n.y+hh+2.5;
+    // background track
+    ctx.fillStyle=`rgba(${col[0]},${col[1]},${col[2]},0.12)`;
+    ctx.fillRect(bx,by,barW,barH);
+    // fill
+    const cc=P.capCharge;
+    ctx.fillStyle=`rgba(${cc[0]},${cc[1]},${cc[2]},${0.5+n.v*0.4})`;
+    ctx.fillRect(bx,by,barW*n.v,barH);
+  }
+}
+
+// Draw via hole (interneuron)
+function drawVia(n) {
+  const ref=n.refract>0;
+  const col=ref ? P.padRefract : P.padInter;
+  const glowCol=ref ? P.padRefract : P.interGlow;
+
+  if (n.glow>0.01) {
+    const hr=n.r+20*n.glow;
+    const hg=ctx.createRadialGradient(n.x,n.y,0,n.x,n.y,hr);
+    hg.addColorStop(0,  `rgba(${glowCol[0]},${glowCol[1]},${glowCol[2]},${(n.glow*0.5).toFixed(2)})`);
+    hg.addColorStop(1,  `rgba(${glowCol[0]},${glowCol[1]},${glowCol[2]},0)`);
+    ctx.beginPath(); ctx.arc(n.x,n.y,hr,0,Math.PI*2);
+    ctx.fillStyle=hg; ctx.fill();
+  }
+
+  // outer annular ring
+  ctx.beginPath(); ctx.arc(n.x,n.y,n.r,0,Math.PI*2);
+  ctx.strokeStyle=`rgba(${col[0]},${col[1]},${col[2]},${ref?0.6:0.35+n.glow*0.55})`;
+  ctx.lineWidth=1.5+n.glow*1.5; ctx.stroke();
+
+  // inner fill
+  ctx.beginPath(); ctx.arc(n.x,n.y,n.r*0.55,0,Math.PI*2);
+  ctx.fillStyle=`rgba(${col[0]},${col[1]},${col[2]},${ref?0.25:0.08+n.v*0.15+n.glow*0.2})`;
+  ctx.fill();
+
+  // via copper fill ring
+  ctx.beginPath(); ctx.arc(n.x,n.y,n.r*0.55,0,Math.PI*2);
+  ctx.strokeStyle=`rgba(${col[0]},${col[1]},${col[2]},${ref?0.4:0.15+n.glow*0.4})`;
+  ctx.lineWidth=0.8; ctx.stroke();
+
+  // X mark inside via
+  const d=n.r*0.35;
+  ctx.strokeStyle=`rgba(${col[0]},${col[1]},${col[2]},${ref?0.5:0.2+n.glow*0.5})`;
+  ctx.lineWidth=0.6;
+  ctx.beginPath(); ctx.moveTo(n.x-d,n.y-d); ctx.lineTo(n.x+d,n.y+d); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(n.x+d,n.y-d); ctx.lineTo(n.x-d,n.y+d); ctx.stroke();
+
+  // charge arc
+  if (!ref && n.v>0.05) {
+    ctx.beginPath();
+    ctx.arc(n.x,n.y,n.r+3.5,-Math.PI/2,-Math.PI/2+Math.PI*2*n.v);
+    const cc=P.capCharge;
+    ctx.strokeStyle=`rgba(${cc[0]},${cc[1]},${cc[2]},${(0.15+n.v*0.5).toFixed(2)})`;
+    ctx.lineWidth=1.3; ctx.stroke();
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  MAIN LOOP
+// ═══════════════════════════════════════════════════════════════
+let last=null;
+
+function frame(ts) {
+  const dt=last?Math.min(ts-last,32):16;
+  last=ts;
+
+  externalDrive(dt);
+
+  neurons.forEach(n=>{
+    if (n.refract>0) { n.refract-=dt; n.v=0; }
+    else {
+      n.v=Math.max(0,n.v-n.leak*dt);
+      if (n.v>=n.thresh) fireNeuron(n.id);
+    }
+    n.glow=Math.max(0,n.glow-0.025*dt/16);
+    // store voltage history
+    if (ts%3<dt) {
+      n.vHistory[n.vCursor%24]=n.refract>0?-0.1:n.v;
+      n.vCursor++;
+    }
+  });
+
+  edges.forEach(e=>{
+    e.pulses=e.pulses.filter(p=>{
+      p.t+=SPEED*dt;
+      if (p.t>=1) {
+        const target=neurons[e.b];
+        if (target.refract<=0) target.v=Math.min(1,target.v+p.w);
+        return false;
+      }
+      return true;
+    });
+  });
+
+  // ── Background ──
+  if (!bgGrad) {
+    bgGrad=ctx.createRadialGradient(W*0.3,H*0.4,0,W*0.7,H*0.6,Math.max(W,H));
+    bgGrad.addColorStop(0,'#050e07');
+    bgGrad.addColorStop(0.5,'#030a0d');
+    bgGrad.addColorStop(1,'#020408');
+  }
+  ctx.fillStyle=bgGrad;
+  ctx.fillRect(0,0,W,H);
+
+  // dot grid
+  if (gridCanvas) ctx.drawImage(gridCanvas,0,0);
+
+  // layer bands + labels
+  drawLayerBands();
+
+  // vignette
+  const vig=ctx.createRadialGradient(W/2,H/2,H*0.25,W/2,H/2,H*0.9);
+  vig.addColorStop(0,'rgba(0,0,0,0)');
+  vig.addColorStop(1,'rgba(0,0,0,0.72)');
+  ctx.fillStyle=vig; ctx.fillRect(0,0,W,H);
+
+  // ── Traces (axons) ──
+  edges.forEach(drawTrace);
+
+  // ── Pulses ──
+  edges.forEach(e=> e.pulses.forEach(p=> drawPulse(e,p)));
+
+  // ── Neurons ──
+  neurons.forEach(n=> n.isPyra ? drawChipPad(n) : drawVia(n));
+
+  requestAnimationFrame(frame);
+}
+
+function resize() {
+  W=canvas.width=window.innerWidth;
+  H=canvas.height=window.innerHeight;
+  buildGrid();
+  buildGraph();
+}
+window.addEventListener('resize',resize);
+resize();
+requestAnimationFrame(frame);
+</script>
+</body>
+</html>

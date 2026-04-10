@@ -9,8 +9,6 @@
   --card: rgba(8, 20, 31, 0.72);
   --card-border: rgba(255, 255, 255, 0.14);
   --shadow: 0 24px 80px rgba(0, 0, 0, 0.28);
-  --home-bg: url('https://images.squarespace-cdn.com/content/v1/5da00d13f096cb70b40ce225/1595728688262-NBFU6LBEKPBT4RXXGLG7/117e%2B-%2BCopy.jpg?format=2500w');
-  --alt-bg: url('https://images.squarespace-cdn.com/content/v1/5da00d13f096cb70b40ce225/1595722653638-OU0W3CFKDF64E9LMFG1F/20200530_214643.jpg?format=2500w');
 }
 
 * {
@@ -24,9 +22,25 @@ html {
 body {
   margin: 0;
   color: var(--text);
-  background: var(--bg-deep);
+  background: #030805;
   font-family: Georgia, "Times New Roman", serif;
   line-height: 1.55;
+}
+
+.neural-desktop {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.topbar,
+main {
+  position: relative;
+  z-index: 1;
 }
 
 main {
@@ -103,19 +117,9 @@ main {
   align-items: center;
   justify-content: center;
   padding: 6.5rem 1.2rem 3.5rem;
-  background-size: cover;
-  background-position: center;
-  background-attachment: fixed;
   scroll-margin-top: 4.8rem;
   scroll-snap-align: start;
 }
-
-.panel-home { background-image: var(--home-bg); }
-.panel-career { background-image: var(--home-bg); }
-.panel-education { background-image: var(--alt-bg); }
-.panel-projects { background-image: var(--home-bg); }
-.panel-publications { background-image: var(--alt-bg); }
-.panel-contacts { background-image: var(--home-bg); }
 
 .overlay {
   position: absolute;
@@ -348,9 +352,5 @@ a {
 
   h1 {
     max-width: none;
-  }
-
-  .panel {
-    background-attachment: scroll;
   }
 }
