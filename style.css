@@ -149,6 +149,22 @@ main {
   max-width: 780px;
 }
 
+.hero-identity {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.profile-photo {
+  width: clamp(4.75rem, 10vw, 7rem);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  box-shadow: var(--shadow);
+  background: rgba(255, 255, 255, 0.08);
+}
+
 .eyebrow {
   margin: 0 0 0.6rem;
   letter-spacing: 0.12em;
@@ -350,6 +366,10 @@ a {
 
   .hero-layout {
     grid-template-columns: 1fr;
+  }
+
+  .hero-identity {
+    align-items: flex-start;
   }
 
   h1 {
