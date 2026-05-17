@@ -55,7 +55,6 @@ main {
 }
 
 main {
-  scroll-snap-type: y proximity;
 }
 
 .topbar {
@@ -108,13 +107,10 @@ main {
 
 .panel {
   position: relative;
-  min-height: 100vh;
   display: flex;
-  align-items: center;
   justify-content: center;
-  padding: 6.5rem 1.2rem 3.5rem;
+  padding: 6.5rem 1.2rem 5rem;
   scroll-margin-top: 4.8rem;
-  scroll-snap-align: start;
 }
 
 .content {
