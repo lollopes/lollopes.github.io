@@ -52,7 +52,21 @@ def score_author(candidate: dict[str, Any]) -> tuple[int, int, int]:
 def find_author() -> dict[str, Any]:
     user_id = os.getenv("SCHOLAR_USER_ID")
     if user_id:
-        return scholarly.search_author_id(user_id)
+        try:
+            return scholarly.search_author_id(user_id)
+        except Exception:
+            matched_author = None
+
+            for candidate in scholarly.search_author(DEFAULT_NAME):
+                candidate_id = candidate.get("scholar_id") or candidate.get("id")
+                if candidate_id == user_id:
+                    matched_author = candidate
+                    break
+
+            if matched_author:
+                return matched_author
+
+            raise
 
     best_match = None
     best_score = (-1, -1, -1)
@@ -143,11 +157,18 @@ def build_payload(filled_author: dict[str, Any]) -> dict[str, Any]:
 
 def main() -> None:
     configure_proxy()
-    author = find_author()
-    filled_author = scholarly.fill(author, sections=["basics", "indices", "counts", "publications"])
-    payload = build_payload(filled_author)
-    OUTPUT_PATH.parent.mkdir(parents=True, exist_ok=True)
-    OUTPUT_PATH.write_text(json.dumps(payload, indent=2) + "\n", encoding="utf-8")
+    try:
+        author = find_author()
+        filled_author = scholarly.fill(author, sections=["basics", "indices", "counts", "publications"])
+        payload = build_payload(filled_author)
+        OUTPUT_PATH.parent.mkdir(parents=True, exist_ok=True)
+        OUTPUT_PATH.write_text(json.dumps(payload, indent=2) + "\n", encoding="utf-8")
+        print("Scholar data updated successfully.")
+    except Exception as exc:
+        if OUTPUT_PATH.exists():
+            print(f"Warning: Scholar fetch failed ({exc}). Keeping existing snapshot.")
+        else:
+            raise
 
 
 if __name__ == "__main__":
