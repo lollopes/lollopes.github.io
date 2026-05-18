@@ -1,12 +1,12 @@
 {
-  "generated_at": "2026-05-11T07:54:40.212985+00:00",
+  "generated_at": "2026-05-18T08:16:06.094139+00:00",
   "profile": {
     "name": "Lorenzo Pes",
     "scholar_url": "https://scholar.google.com/citations?user=tCzijDwAAAAJ&hl=en",
     "tue_url": "https://research.tue.nl/en/persons/lorenzo-pes",
     "orcid": "https://orcid.org/0000-0002-8151-9327",
     "affiliation": "PhD Candidate, Eindhoven University of Technology",
-    "citedby": 26,
+    "citedby": 27,
     "hindex": 2,
     "i10index": 1
   },
@@ -36,7 +36,7 @@
       "title": "Active Dendrites Enable Efficient Continual Learning in Time-To-First-Spike Neural Networks",
       "year": 2024,
       "venue": "2024 6th IEEE International Conference on Artificial Intelligence Circuits \u2026, 2024",
-      "citations": 7,
+      "citations": 8,
       "url": "https://ieeexplore.ieee.org/abstract/document/10595872/"
     },
     {
