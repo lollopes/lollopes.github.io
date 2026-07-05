@@ -1,12 +1,12 @@
 {
-  "generated_at": "2026-07-03T07:40:45.838712+00:00",
+  "generated_at": "2026-07-05T07:40:04.808260+00:00",
   "profile": {
     "name": "Lorenzo Pes",
     "scholar_url": "https://scholar.google.com/citations?user=tCzijDwAAAAJ&hl=en",
     "tue_url": "https://research.tue.nl/en/persons/lorenzo-pes",
     "orcid": "https://orcid.org/0000-0002-8151-9327",
     "affiliation": "PhD Candidate, Eindhoven University of Technology",
-    "citedby": 28,
+    "citedby": 29,
     "hindex": 2,
     "i10index": 1
   },
@@ -29,7 +29,7 @@
       "title": "Hardware-In-The-Loop Training of a 4f Optical Correlator with Logarithmic Complexity Reduction for CNNs",
       "year": 2025,
       "venue": "Optical Fiber Communication Conference, Tu3F. 3, 2025",
-      "citations": 1,
+      "citations": 2,
       "url": "https://opg.optica.org/abstract.cfm?uri=OFC-2025-Tu3F.3"
     },
     {
