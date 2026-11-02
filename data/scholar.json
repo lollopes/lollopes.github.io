@@ -1,13 +1,13 @@
 {
-  "generated_at": "2026-09-07T09:25:40.958084+00:00",
+  "generated_at": "2026-11-02T13:02:46.289213+00:00",
   "profile": {
     "name": "Lorenzo Pes",
     "scholar_url": "https://scholar.google.com/citations?user=tCzijDwAAAAJ&hl=en",
     "tue_url": "https://research.tue.nl/en/persons/lorenzo-pes",
     "orcid": "https://orcid.org/0000-0002-8151-9327",
     "affiliation": "PhD Candidate, Eindhoven University of Technology",
-    "citedby": 34,
-    "hindex": 2,
+    "citedby": 41,
+    "hindex": 3,
     "i10index": 2
   },
   "publications": [
@@ -15,28 +15,28 @@
       "title": "Traces propagation: memory-efficient and scalable forward-only learning in spiking neural networks",
       "year": 2026,
       "venue": "Neuromorphic Computing and Engineering 6 (1), 014002, 2026",
-      "citations": 1,
+      "citations": 3,
       "url": "https://iopscience.iop.org/article/10.1088/2634-4386/ae2ef9/meta"
     },
     {
       "title": "LOKI: a 0.266 pJ/SOP Digital SNN Accelerator with Multi-Cycle Clock-Gated SRAM in 22 nm",
       "year": 2026,
       "venue": "2026 31st Asia and South Pacific Design Automation Conference (ASP-DAC), 133-139, 2026",
-      "citations": 0,
+      "citations": 1,
       "url": "https://ieeexplore.ieee.org/abstract/document/11420301/"
     },
     {
       "title": "Hardware-In-The-Loop Training of a 4f Optical Correlator with Logarithmic Complexity Reduction for CNNs",
       "year": 2025,
       "venue": "Optical Fiber Communication Conference, Tu3F. 3, 2025",
-      "citations": 2,
+      "citations": 3,
       "url": "https://opg.optica.org/abstract.cfm?uri=OFC-2025-Tu3F.3"
     },
     {
       "title": "Active Dendrites Enable Efficient Continual Learning in Time-To-First-Spike Neural Networks",
       "year": 2024,
       "venue": "2024 6th IEEE International Conference on Artificial Intelligence Circuits \u2026, 2024",
-      "citations": 11,
+      "citations": 13,
       "url": "https://ieeexplore.ieee.org/abstract/document/10595872/"
     },
     {
@@ -50,7 +50,7 @@
       "title": "Online Spatio-Temporal Learning with Target Projection",
       "year": 2023,
       "venue": "2023 5th IEEE International Conference on Artificial Intelligence Circuits \u2026, 2023",
-      "citations": 20,
+      "citations": 21,
       "url": "https://arxiv.org/abs/2304.05124"
     }
   ]
