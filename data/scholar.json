@@ -1,12 +1,12 @@
 {
-  "generated_at": "2026-11-23T14:47:20.678107+00:00",
+  "generated_at": "2026-11-26T13:57:58.169489+00:00",
   "profile": {
     "name": "Lorenzo Pes",
     "scholar_url": "https://scholar.google.com/citations?user=tCzijDwAAAAJ&hl=en",
     "tue_url": "https://research.tue.nl/en/persons/lorenzo-pes",
     "orcid": "https://orcid.org/0000-0002-8151-9327",
     "affiliation": "PhD Candidate, Eindhoven University of Technology",
-    "citedby": 44,
+    "citedby": 45,
     "hindex": 3,
     "i10index": 2
   },
@@ -50,7 +50,7 @@
       "title": "Online Spatio-Temporal Learning with Target Projection",
       "year": "2023",
       "venue": "2023 5th IEEE International Conference on Artificial Intelligence Circuits \u2026, 2023",
-      "citations": 20,
+      "citations": 21,
       "url": null
     }
   ]
